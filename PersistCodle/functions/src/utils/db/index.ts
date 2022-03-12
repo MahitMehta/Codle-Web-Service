@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 require("dotenv").config();
 
 const serviceAccount: admin.ServiceAccount = {
-  privateKey: process.env.CODLE_FIREBASE_PRIVATE_KEY,
+  privateKey: process.env.CODLE_FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
   clientEmail: process.env.CODLE_FIREBASE_CLIENT_EMAIL,
   projectId: process.env.CODLE_FIREBASE_PROJECT_ID,
 };
