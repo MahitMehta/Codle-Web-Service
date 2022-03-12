@@ -12,9 +12,10 @@ namespace GenerateCodle
         {
             r = new Random();
             nOrB = r.Next(1, 4);
-            bool evaluation =  r.Next(0, 2) == 1;
+            bool evaluation = r.Next(0, 2) == 1;
             string half1 = Term(evaluation, nOrB);
             nOrB = r.Next(1, 4);
+
             return RunComplicator(half1 + LatterTerm(evaluation, nOrB), r);
         }
 
@@ -26,7 +27,7 @@ namespace GenerateCodle
                 do
                 {
                     sign = r.Next(1, 7);
-                    num1 = r.Next(0 , 9);
+                    num1 = r.Next(0, 9);
                     num2 = r.Next(0, num1);
 
                 } while (num1 == num2 && (sign == 2 || sign == 4 || sign == 6) && eval == false);
@@ -35,11 +36,14 @@ namespace GenerateCodle
                 {
                     switch (r.Next(1, 4))
                     {
-                        case 1: sign = 2;
+                        case 1:
+                            sign = 2;
                             break;
-                        case 2: sign = 4;
+                        case 2:
+                            sign = 4;
                             break;
-                        case 3: sign = 6;
+                        case 3:
+                            sign = 6;
                             break;
                     }
                 }
@@ -49,13 +53,14 @@ namespace GenerateCodle
 
             switch (sign)
             {
-                case 1: if (d == 3)
-                            if (r.Next(0, 1) == 1)
-                                term = eval ? "T≠F" : "T≠T";
-                            else
-                                term = eval ? "F≠T" : "F≠F";
+                case 1:
+                    if (d == 3)
+                        if (r.Next(0, 1) == 1)
+                            term = eval ? "T≠F" : "T≠T";
                         else
-                            term = DoOrder(eval, num1, num2, "\u2260");
+                            term = eval ? "F≠T" : "F≠F";
+                    else
+                        term = DoOrder(eval, num1, num2, "\u2260");
                     break;
                 case 2:
                     if (d == 3)
@@ -66,15 +71,20 @@ namespace GenerateCodle
                     else
                         term = DoOrder(eval, num1, num2, "=");
                     break;
-                case 3: term = DoOrder(eval, num1, num2, ">");
+                case 3:
+                    term = DoOrder(eval, num1, num2, ">");
                     break;
-                case 4: term = DoOrder(eval, num1, num2, "≥");
+                case 4:
+                    term = DoOrder(eval, num1, num2, "≥");
                     break;
-                case 5: term = DoOrder(!eval, num1, num2, "<");
+                case 5:
+                    term = DoOrder(!eval, num1, num2, "<");
                     break;
-                case 6: term = DoOrder(!eval, num1, num2, "≤");
+                case 6:
+                    term = DoOrder(!eval, num1, num2, "≤");
                     break;
-                default: Console.WriteLine("Something went wrong.");
+                default:
+                    Console.WriteLine("Something went wrong.");
                     term = "";
                     break;
             }
@@ -100,19 +110,29 @@ namespace GenerateCodle
 
             switch (sign)
             {
-                case 1: term = "|";
+                case 1:
+                    term = "|";
                     if (!eval)
-                        term += Term(true, d);
+                    {
+                        string additionToTerm = Term(true, d);
+                        term += additionToTerm;
+                    }
                     else
-                        term += r.Next(0, 2) == 1 ? term += Term(true, d) : term += Term(false, d);
+                    {
+                        string additionToTerm = r.Next(0, 2) == 1 ? Term(true, d) : Term(false, d);
+                        term += additionToTerm;
+                    }
                     break;
-                case 2: term = "&" + Term(true, d);
+                case 2:
+                    term = "&" + Term(true, d);
                     break;
-                case 3: term = "=" + Term(eval, d);
+                case 3:
+                    term = "=" + Term(eval, d);
                     break;
-                case 4: term = "\u2260" + Term(!eval, d); //not equals
+                case 4:
+                    term = "\u2260" + Term(!eval, d); //not equals
                     break;
-                default: Console.WriteLine("Something went wrong.");
+                default:
                     term = "";
                     break;
             }
@@ -130,10 +150,10 @@ namespace GenerateCodle
                 else
                 {
                     string highest = FindHighestNum(str);
-                    str = ReplaceFirst(str, highest, highest + r.Next(0,10));
+                    str = ReplaceFirst(str, highest, highest + r.Next(0, 10));
                 }
             }
-            
+
             return str.ToCharArray();
         }
 
@@ -142,7 +162,7 @@ namespace GenerateCodle
             int pos = str.IndexOf(search);
             return str.Substring(0, pos) + replace + str.Substring(pos + search.Length);
         }
-        
+
         static string FindHighestNum(string s)
         {
             int highest = 0, current = 0;
@@ -150,7 +170,7 @@ namespace GenerateCodle
             {
                 if (c >= 48 && c <= 57)
                     current = int.Parse(c.ToString());
-                
+
                 if (current > highest)
                     highest = current;
             }
