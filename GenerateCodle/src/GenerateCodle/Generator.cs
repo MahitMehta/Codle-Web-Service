@@ -15,7 +15,7 @@ namespace GenerateCodle
             bool evaluation =  r.Next(0, 2) == 1;
             string half1 = Term(evaluation, nOrB);
             nOrB = r.Next(1, 4);
-            return RunComplicator(half1 + LatterTerm(evaluation, nOrB));
+            return RunComplicator(half1 + LatterTerm(evaluation, nOrB), r);
         }
 
         static string Term(bool eval, int d)
@@ -119,7 +119,7 @@ namespace GenerateCodle
             return term;
         }
 
-        static char[] RunComplicator(string str)
+        static char[] RunComplicator(string str, Random r)
         {
             while (str.Length < 8)
             {
@@ -130,7 +130,7 @@ namespace GenerateCodle
                 else
                 {
                     string highest = FindHighestNum(str);
-                    str = ReplaceFirst(str, highest, highest + 0);
+                    str = ReplaceFirst(str, highest, highest + r.Next(0,10));
                 }
             }
             
