@@ -16,7 +16,7 @@ namespace GenerateCodle
             string half1 = Term(evaluation, nOrB);
             nOrB = r.Next(1, 4);
 
-            return RunComplicator(half1 + LatterTerm(evaluation, nOrB), r);
+            return RunComplicator(half1 + LatterTerm(evaluation, nOrB), ref r);
         }
 
         static string Term(bool eval, int d)
@@ -30,7 +30,7 @@ namespace GenerateCodle
                     num1 = r.Next(0, 9);
                     num2 = r.Next(0, num1);
 
-                } while (num1 == num2 && (sign == 2 || sign == 4 || sign == 6) && eval == false);
+                } while ((num1 == num2 && (sign == 2 || sign == 4 || sign == 6) && eval == false) || (eval == true && num1 != num2 && sign == 2));
 
                 if (num1 == num2)
                 {
@@ -139,7 +139,7 @@ namespace GenerateCodle
             return term;
         }
 
-        static char[] RunComplicator(string str, Random r)
+        static char[] RunComplicator(string str, ref Random r)
         {
             while (str.Length < 8)
             {
@@ -149,11 +149,39 @@ namespace GenerateCodle
                     str = ReplaceFirst(str, "F", "!T");
                 else
                 {
-                    string highest = FindHighestNum(str);
-                    str = ReplaceFirst(str, highest, highest + r.Next(0, 10));
+                    string tbr = FindBefore(str, "≥");
+                    if (tbr != null)
+                        str = ReplaceFirst(str, tbr, tbr + r.Next(0, 10));
+                    else
+                    {
+                        tbr = FindBefore(str, ">");
+                        if (tbr != null)
+                            str = ReplaceFirst(str, tbr, tbr + r.Next(0, 10));
+                        else
+                        {
+                            tbr = FindBefore(str, "\u2260");
+                            if (tbr != null)
+                                str = ReplaceFirst(str, tbr, tbr + r.Next(0, 10));
+                            else
+                            {
+                                string highest = FindHighestNum(str);
+                                str = ReplaceFirst(str, highest, highest + r.Next(0, 10));
+                                if (str.Contains("="))
+                                {
+                                    string sub = str.Substring(str.IndexOf("=") + 1);
+                                    if (sub.Contains("="))
+                                    {
+                                        if (sub.Contains("&"))
+                                            str = ReplaceFirst(str, "&", "|");
+                                        else
+                                            str = ReplaceFirst(str, "=", "\u2260");
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
             return str.ToCharArray();
         }
 
@@ -162,7 +190,6 @@ namespace GenerateCodle
             int pos = str.IndexOf(search);
             return str.Substring(0, pos) + replace + str.Substring(pos + search.Length);
         }
-
         static string FindHighestNum(string s)
         {
             int highest = 0, current = 0;
@@ -175,6 +202,14 @@ namespace GenerateCodle
                     highest = current;
             }
             return highest.ToString();
+        }
+
+        static string FindBefore(string s, string search)
+        {
+            int index = s.IndexOf(search);
+            if (index > 0)
+                return s.Substring(index - 1, 1);
+            return null;
         }
     }
 }
