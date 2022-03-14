@@ -24,25 +24,61 @@ namespace GenerateCodle
             string term;
             if (d < 3)
             {
-                do
-                {
-                    sign = r.Next(1, 7);
-                    num1 = r.Next(0, 9);
-                    num2 = r.Next(0, num1);
 
-                } while ((num1 == num2 && (sign == 2 || sign == 4 || sign == 6) && eval == false) || (eval == true && num1 != num2 && sign == 2));
+                num1 = r.Next(0, 9);
+                num2 = r.Next(0, num1 + 1);
 
+                int p3 = r.Next(1, 4);
                 if (num1 == num2)
                 {
-                    switch (r.Next(1, 4))
+                    if (eval)
+                    {
+                        switch (p3)
+                        {
+                            case 1:
+                                sign = 2;
+                                break;
+                            case 2:
+                                sign = 4;
+                                break;
+                            case 3:
+                                sign = 6;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (p3)
+                        {
+                            case 1:
+                                sign = 1;
+                                break;
+                            case 2:
+                                sign = 3;
+                                break;
+                            case 3:
+                                sign = 5;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    switch (r.Next(1, 6))
                     {
                         case 1:
-                            sign = 2;
+                            sign = (eval ? 1 : 2);
                             break;
                         case 2:
-                            sign = 4;
+                            sign = 3;
                             break;
                         case 3:
+                            sign = 4;
+                            break;
+                        case 4:
+                            sign = 5;
+                            break;
+                        case 5:
                             sign = 6;
                             break;
                     }
@@ -55,7 +91,7 @@ namespace GenerateCodle
             {
                 case 1:
                     if (d == 3)
-                        if (r.Next(0, 1) == 1)
+                        if (r.Next(0, 2) == 1)
                             term = eval ? "T≠F" : "T≠T";
                         else
                             term = eval ? "F≠T" : "F≠F";
@@ -64,7 +100,7 @@ namespace GenerateCodle
                     break;
                 case 2:
                     if (d == 3)
-                        if (r.Next(0, 1) == 1)
+                        if (r.Next(0, 2) == 1)
                             term = eval ? "T=T" : "T=F";
                         else
                             term = eval ? "F=F" : "F=T";
@@ -149,37 +185,16 @@ namespace GenerateCodle
                     str = ReplaceFirst(str, "F", "!T");
                 else
                 {
-                    string tbr = FindBefore(str, "≥");
-                    if (tbr != null)
-                        str = ReplaceFirst(str, tbr, tbr + r.Next(0, 10));
-                    else
-                    {
-                        tbr = FindBefore(str, ">");
-                        if (tbr != null)
-                            str = ReplaceFirst(str, tbr, tbr + r.Next(0, 10));
-                        else
-                        {
-                            tbr = FindBefore(str, "\u2260");
-                            if (tbr != null)
-                                str = ReplaceFirst(str, tbr, tbr + r.Next(0, 10));
-                            else
-                            {
-                                string highest = FindHighestNum(str);
-                                str = ReplaceFirst(str, highest, highest + r.Next(0, 10));
-                                if (str.Contains("="))
-                                {
-                                    string sub = str.Substring(str.IndexOf("=") + 1);
-                                    if (sub.Contains("="))
-                                    {
-                                        if (sub.Contains("&"))
-                                            str = ReplaceFirst(str, "&", "|");
-                                        else
-                                            str = ReplaceFirst(str, "=", "\u2260");
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    bool first = false;
+                    string highest = FindHighestNum(str);
+                    string substr = str;
+                    if (str.IndexOf(highest) == 0)
+                        first = true;
+
+                    if (!first)
+                        substr = str.Substring(str.IndexOf(highest) - 1);
+                    str = str.Replace(substr, ReplaceSign(substr, str.IndexOf(highest), first));
+                    str = ReplaceFirst(str, highest, highest + r.Next(0, 10));
                 }
             }
             return str.ToCharArray();
@@ -204,12 +219,43 @@ namespace GenerateCodle
             return highest.ToString();
         }
 
-        static string FindBefore(string s, string search)
+        static string ReplaceSign(string substr, int highestIndex, bool first)
         {
-            int index = s.IndexOf(search);
-            if (index > 0)
-                return s.Substring(index - 1, 1);
-            return null;
+            string sbh = substr.Substring(0, 1); //symbol before highest
+            string sah = "";
+            if (substr.Length > 2)
+                if (!first)
+                    sah = substr.Substring(2, 1); //symbol after highest
+                else
+                    sah = substr.Substring(1, 1);
+
+            if (highestIndex == 1 || highestIndex == 5)
+                if (sah.Equals("<") || sah.Equals("≤") || sah.Equals("=") || sah.Equals("\u2260"))
+                    return ReplaceFirst(substr, sah, FindOpposite(sah));
+            if (highestIndex == 3 || highestIndex == 7)
+                if (sbh.Equals(">") || sbh.Equals("≥") || sbh.Equals("=") || sbh.Equals("\u2260"))
+                    return ReplaceFirst(substr, sbh, FindOpposite(sbh));
+            return substr;
+        }
+        static string FindOpposite(string s)
+        {
+            switch (s)
+            {
+                case "<":
+                    return ">";
+                case ">":
+                    return "<";
+                case "≥":
+                    return "≤";
+                case "≤":
+                    return "≥";
+                case "\u2260":
+                    return "=";
+                case "=":
+                    return "\u2260";
+            }
+
+            return ".";
         }
     }
 }
