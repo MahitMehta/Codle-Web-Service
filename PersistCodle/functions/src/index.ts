@@ -28,15 +28,15 @@ export const persistCodle = functions.pubsub
       const currentTime = moment().tz(DEFAULT_TIMEZONE).toDate();
 
       const currentTimeStart = moment(currentTime)
-        .tz(DEFAULT_TIMEZONE)
-        .endOf("day")
-        .subtract(5, "minutes");
+          .tz(DEFAULT_TIMEZONE)
+          .endOf("day")
+          .subtract(5, "minutes");
       const currentTimeEnd = moment(currentTime)
-        .tz(DEFAULT_TIMEZONE)
-        .endOf("day");
+          .tz(DEFAULT_TIMEZONE)
+          .endOf("day");
 
       const isBetweenThreshold = moment(currentTime)
-      .tz(DEFAULT_TIMEZONE)
+          .tz(DEFAULT_TIMEZONE)
           .isBetween(currentTimeStart, currentTimeEnd, undefined, "[)");
       const dayIncrement = isBetweenThreshold ? 1 : 0;
 

@@ -12,7 +12,7 @@ Function to Generate Random Codle Puzzle.
     dotnet tool update -g Amazon.Lambda.Tools
 ```
 
-#Execute unit tests
+# Execute unit tests
 ```
     cd "GenerateCodle/test/GenerateCodle.Tests"
     dotnet test
