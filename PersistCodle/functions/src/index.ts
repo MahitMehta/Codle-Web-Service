@@ -20,26 +20,25 @@ async function getNewPuzzle() {
 }
 
 export const persistCodle = functions.pubsub
-    .schedule("0 0 * * *")
+    .schedule("55 23 * * *")
     .timeZone(DEFAULT_TIMEZONE) // ET
     .onRun(async (_context) => {
       const puzzles = db.collection("puzzles");
 
-      // const currentTime = moment().tz(DEFAULT_TIMEZONE).toDate();
+      const currentTime = moment().tz(DEFAULT_TIMEZONE).toDate();
 
-      // const currentTimeStart = moment(currentTime)
-      //   .tz(DEFAULT_TIMEZONE)
-      //   .endOf("day")
-      //   .subtract(5, "minutes");
-      // const currentTimeEnd = moment(currentTime)
-      //   .tz(DEFAULT_TIMEZONE)
-      //   .endOf("day");
+      const currentTimeStart = moment(currentTime)
+        .tz(DEFAULT_TIMEZONE)
+        .endOf("day")
+        .subtract(5, "minutes");
+      const currentTimeEnd = moment(currentTime)
+        .tz(DEFAULT_TIMEZONE)
+        .endOf("day");
 
-      // TODO isBetweenThreshold is not returning true between expected threshold
-      // const isBetweenThreshold = moment(currentTime)
-      // .tz(DEFAULT_TIMEZONE)
-      //     .isBetween(currentTimeStart, currentTimeEnd, undefined, "[)");
-      const dayIncrement = 0; // isBetweenThreshold ? 1 : 0;
+      const isBetweenThreshold = moment(currentTime)
+      .tz(DEFAULT_TIMEZONE)
+          .isBetween(currentTimeStart, currentTimeEnd, undefined, "[)");
+      const dayIncrement = isBetweenThreshold ? 1 : 0;
 
       const startDate = moment()
           .tz(DEFAULT_TIMEZONE)
