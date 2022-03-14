@@ -229,10 +229,10 @@ namespace GenerateCodle
                 else
                     sah = substr.Substring(1, 1);
 
-            if (highestIndex == 1 || highestIndex == 5)
+            if (highestIndex == 0 || highestIndex == 4)
                 if (sah.Equals("<") || sah.Equals("≤") || sah.Equals("=") || sah.Equals("\u2260"))
                     return ReplaceFirst(substr, sah, FindOpposite(sah));
-            if (highestIndex == 3 || highestIndex == 7)
+            if (highestIndex == 2 || highestIndex == 6)
                 if (sbh.Equals(">") || sbh.Equals("≥") || sbh.Equals("=") || sbh.Equals("\u2260"))
                     return ReplaceFirst(substr, sbh, FindOpposite(sbh));
             return substr;

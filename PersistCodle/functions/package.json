@@ -15,10 +15,11 @@
   "main": "lib/index.js",
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.54.0",
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.18.0",
-    "moment-timezone": "^0.5.34",
-    "dotenv": "^16.0.0"
+    "moment-timezone": "^0.5.34"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.0",
