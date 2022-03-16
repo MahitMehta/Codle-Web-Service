@@ -7,7 +7,7 @@ namespace GenerateCodle
     class Generator
     {
         static Random r;
-        static int sign, num1, num2, nOrB;
+        static int sign, num1 = 1, num2 = 1, nOrB;
         public static char[] GenerateAnswer()
         {
             r = new Random();
@@ -24,8 +24,10 @@ namespace GenerateCodle
             string term;
             if (d < 3)
             {
-
-                num1 = r.Next(0, 9);
+                if (num1 == 0 && num2 == 0)
+                    num1 = r.Next(1, 10);
+                else
+                    num1 = r.Next(0, 10);
                 num2 = r.Next(0, num1 + 1);
 
                 int p3 = r.Next(1, 4);
@@ -193,7 +195,7 @@ namespace GenerateCodle
 
                     if (!first)
                         substr = str.Substring(str.IndexOf(highest) - 1);
-                    str = str.Replace(substr, ReplaceSign(substr, str.IndexOf(highest), first));
+                    str = str.Replace(substr, ReplaceSign(substr, str.IndexOf(highest), first, str));
                     str = ReplaceFirst(str, highest, highest + r.Next(0, 10));
                 }
             }
@@ -219,7 +221,7 @@ namespace GenerateCodle
             return highest.ToString();
         }
 
-        static string ReplaceSign(string substr, int highestIndex, bool first)
+        static string ReplaceSign(string substr, int highestIndex, bool first, string str)
         {
             string sbh = substr.Substring(0, 1); //symbol before highest
             string sah = "";
@@ -228,13 +230,20 @@ namespace GenerateCodle
                     sah = substr.Substring(2, 1); //symbol after highest
                 else
                     sah = substr.Substring(1, 1);
+            int highest = int.Parse(str.Substring(highestIndex, 1));
 
             if (highestIndex == 0 || highestIndex == 4)
-                if (sah.Equals("<") || sah.Equals("≤") || sah.Equals("=") || sah.Equals("\u2260"))
+            {
+                int n2ah = int.Parse(str.Substring(highestIndex + 2, 1));
+                if (highest == n2ah)
                     return ReplaceFirst(substr, sah, FindOpposite(sah));
+            }
             if (highestIndex == 2 || highestIndex == 6)
-                if (sbh.Equals(">") || sbh.Equals("≥") || sbh.Equals("=") || sbh.Equals("\u2260"))
+            {
+                int n2bh = int.Parse(str.Substring(highestIndex - 2, 1));
+                if (highest == n2bh)
                     return ReplaceFirst(substr, sbh, FindOpposite(sbh));
+            }
             return substr;
         }
         static string FindOpposite(string s)
@@ -242,9 +251,9 @@ namespace GenerateCodle
             switch (s)
             {
                 case "<":
-                    return ">";
+                    return "\u2260";
                 case ">":
-                    return "<";
+                    return "\u2260";
                 case "≥":
                     return "≤";
                 case "≤":
